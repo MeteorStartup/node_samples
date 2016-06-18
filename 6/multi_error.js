@@ -1,3 +1,6 @@
+//mStartup p206
+//순차적으로 미들웨어를 실행하다가 에러가 났을때 에러 핸들러에 의해서 분기 처리되는 모습
+
 var connect = require('connect');
 
 function hello(req, res, next) {
@@ -19,7 +22,14 @@ var db = {
 function users(req, res, next) {
   var match = req.url.match(/^\/user\/(.+)/);
   if (match) {
-    var user = db.users[match[1]];
+    var user;
+    db.users.forEach(function(tmpUser) {
+      if(tmpUser.name === match[1]) {
+        user = tmpUser;
+      }
+    });
+    //var user = db.users[match[1]];
+    console.log(user);
     if (user) {
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify(user));
